@@ -1,0 +1,83 @@
+﻿@page "/updEstado/{idEdo}"
+@inject NavigationManager NavigationManager
+@using MAUICosmosBlazorCRUD.Data
+@using MAUICosmosBlazorCRUD.Models
+
+<h3>Detalle Estado</h3>
+<hr />
+<p>Id: 
+    <input type="text" @bind="idUpd" class="input" maxlength="50">
+</p>
+<p>Nombre: 
+    <input type="text" @bind="nombreEstadoUpd" class="input" maxlength="50">
+</p>
+<p>Clave: 
+    <input type="text" @bind="claveEstadoUpd" class="input" maxlength="50">
+</p>
+<p>Municipio: 
+    <input type="text" @bind="municipioEstadoUpd" class="input" maxlength="50">
+</p>
+<button class="btn btn-primary" @onclick="UpdateEstadoBtn">Actualizar</button>
+
+@code {
+	[Parameter]
+	public string idEdo { get; set; }
+
+	Services.DBCosmosService service;
+	Models.Estados estados = null;
+	Models.Municipios municipios = null;
+	bool isTrue;
+	private List<Estados> estadosLista;
+
+	//UPDATE
+	string idUpd;
+	string nombreEstadoUpd;
+	string claveEstadoUpd;
+	string municipioEstadoUpd;
+
+	protected override async Task OnInitializedAsync()
+	{
+		idUpd = idEdo;
+		//CONSULTAMOS Y OBTENEMOS LA INFORMACION DE ESE REGISTRO
+		service = new Services.DBCosmosService();
+		estadosLista = await service.GetByIdAsync(idEdo);
+
+		nombreEstadoUpd = estadosLista[0].Nombre;
+		claveEstadoUpd = estadosLista[0].Clave;
+		municipioEstadoUpd = estadosLista[0].Municipios[0].Nombre;
+	}
+
+	private async void UpdateEstadoBtn()
+	{
+		Models.Estados estados = new Models.Estados()
+		{
+			Id = idEdo,
+			PartitionKey = "Mexico",
+			Nombre = nombreEstadoUpd,
+			Clave = claveEstadoUpd,
+			Municipios = new List<Models.Municipios>()
+			{
+				new Models.Municipios()
+				{
+					Nombre=municipioEstadoUpd
+				}
+			}
+		};
+		service = new Services.DBCosmosService();
+		isTrue = await service.UpdateAsync(estados, estados.PartitionKey);
+
+		if (isTrue)
+		{
+			NavigationManager.NavigateTo("/fetchdata");
+		}
+		else
+		{
+			
+		}
+	}
+
+	private void showLista()
+	{
+		NavigationManager.NavigateTo("/fetchdata");
+	}
+}

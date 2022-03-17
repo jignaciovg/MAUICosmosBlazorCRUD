@@ -1,0 +1,32 @@
+﻿@page "/delEstado/{idEdo}"
+@inject NavigationManager NavigationManager
+
+<h3>DeleteEstado</h3>
+
+@code {
+	[Parameter]
+	public string idEdo { get; set; }
+	bool isTrue;
+
+	Services.DBCosmosService service;
+
+	protected override async Task OnInitializedAsync()
+	{
+		DeleteEstadoAction();
+	}
+
+	private async void DeleteEstadoAction()
+	{
+		service = new Services.DBCosmosService();
+		isTrue = await service.DeleteAsync(idEdo,"Mexico");
+
+		if (isTrue)
+		{
+			NavigationManager.NavigateTo("/fetchdata");
+		}
+		else
+		{
+			
+		}
+	}
+}

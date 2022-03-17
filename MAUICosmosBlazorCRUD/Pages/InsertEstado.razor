@@ -1,0 +1,62 @@
+﻿@page "/insertEdo"
+@inject NavigationManager NavigationManager
+
+<h1>Agregar Estado</h1>
+
+<p>Nombre: 
+    <input type="text" @bind="nombreEstadoinsert" class="input" maxlength="50">
+</p>
+<p>Clave: 
+    <input type="text" @bind="claveEstadoinsert" class="input" maxlength="50">
+</p>
+<p>Municipio: 
+    <input type="text" @bind="municipioEstadoinsert" class="input" maxlength="50">
+</p>
+
+<button class="btn btn-primary" @onclick="InsertEstadoBtn">Agregar</button>
+
+@code {
+	Services.DBCosmosService service;
+	Models.Estados estados = null;
+	Models.Municipios municipios = null;
+	bool isTrue;
+	//INSERT
+	string nombreEstadoinsert;
+	string claveEstadoinsert;
+	string municipioEstadoinsert;
+
+	private async void InsertEstadoBtn()
+	{
+		var myGUID = Guid.NewGuid();
+		Models.Estados estados = new Models.Estados()
+		{
+			Id = myGUID.ToString(),
+			PartitionKey = "Mexico",
+			Nombre = nombreEstadoinsert,
+			Clave = claveEstadoinsert,
+			Municipios = new List<Models.Municipios>()
+			{
+				new Models.Municipios()
+				{
+					Nombre=municipioEstadoinsert
+				}
+			}
+		};
+		service = new Services.DBCosmosService();
+		isTrue = await service.SaveAsync(estados, true);
+
+		if (isTrue)
+		{
+			NavigationManager.NavigateTo("/fetchdata");
+		}
+		else
+		{
+			
+		}
+	}
+
+	private void showLista()
+	{
+		NavigationManager.NavigateTo("/fetchdata");
+	}
+}

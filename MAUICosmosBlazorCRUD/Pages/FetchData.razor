@@ -2,6 +2,7 @@
 
 @using MAUICosmosBlazorCRUD.Data
 @using MAUICosmosBlazorCRUD.Models
+@inject NavigationManager NavigationManager
 @inject WeatherForecastService ForecastService
 
 <h1>Estados</h1>
@@ -14,12 +15,15 @@
 }
 else
 {
+	<button class="btn btn-primary" @onclick="AgregarEstado">Agregar Estado</button>
+
 	<table class="table">
 		<thead>
 			<tr>
 				<th>Clave</th>
 				<th>Nombre</th>
 				<th>Municipio</th>
+				<th>Acciones</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -34,6 +38,10 @@ else
 							<p>@mun.Nombre</p>
 						}
 					</td>
+					<td>
+						<a class="btn btn-secondary" href='/updEstado/@forecast.Id'>Actualizar</a> 
+						<a class="btn btn-danger" href='/delEstado/@forecast.Id'>Eliminar</a> 
+					</td>
 				</tr>
 			}
 		</tbody>
@@ -47,12 +55,15 @@ else
 
 	private List<Estados> estadosLista;
 
-	private WeatherForecast[] forecasts;
-
 	protected override async Task OnInitializedAsync()
 	{
 		service = new Services.DBCosmosService();
 		estadosLista = await service.GetAsync();
-		//forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
 	}
+
+	private void AgregarEstado()
+	{
+		NavigationManager.NavigateTo("/insertEdo");
+	}
+	
 }

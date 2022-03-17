@@ -12,8 +12,9 @@ namespace MAUICosmosBlazorCRUD.Interfaces
         Task CreateDatabase();
         Task CreateDocumentCollection();
         Task<List<Estados>> GetAsync();
-        Task SaveAsync(Estados estados, bool isNew);
-        Task UpdateAsync(Estados estados, string partitionKey);
-        Task DeleteAsync(string id, string partitionKey);
+        Task<List<Estados>> GetByIdAsync(string id);
+        Task<bool> SaveAsync(Estados estados, bool isNew);
+        Task<bool> UpdateAsync(Estados estados, string partitionKey);
+        Task<bool> DeleteAsync(string id, string partitionKey);
     }
 }
