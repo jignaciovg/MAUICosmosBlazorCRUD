@@ -1,0 +1,58 @@
+﻿@page "/fetchdata"
+
+@using MAUICosmosBlazorCRUD.Data
+@using MAUICosmosBlazorCRUD.Models
+@inject WeatherForecastService ForecastService
+
+<h1>Estados</h1>
+
+<p>Obtención de datos desde Cosmos.</p>
+
+@if (estadosLista == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Clave</th>
+				<th>Nombre</th>
+				<th>Municipio</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var forecast in estadosLista)
+			{
+				<tr>
+					<td>@forecast.Clave</td>
+					<td>@forecast.Nombre</td>
+					<td>
+						@foreach (var mun in @forecast.Municipios)
+						{
+							<p>@mun.Nombre</p>
+						}
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+@code {
+	Services.DBCosmosService service;
+	Models.Estados estados = null;
+	Models.Municipios municipios = null;
+
+	private List<Estados> estadosLista;
+
+	private WeatherForecast[] forecasts;
+
+	protected override async Task OnInitializedAsync()
+	{
+		service = new Services.DBCosmosService();
+		estadosLista = await service.GetAsync();
+		//forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+	}
+}

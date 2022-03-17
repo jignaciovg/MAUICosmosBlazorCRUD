@@ -1,0 +1,103 @@
+﻿@page "/counter"
+
+<h1>Insert</h1>
+
+<p>Nombre: 
+    <input type="text" @bind="nombreEstadoinsert" class="input" maxlength="50">
+</p>
+<p>Clave: 
+    <input type="text" @bind="claveEstadoinsert" class="input" maxlength="50">
+</p>
+<p>Municipio: 
+    <input type="text" @bind="municipioEstadoinsert" class="input" maxlength="50">
+</p>
+
+<button class="btn btn-primary" @onclick="InsertEstado">Aceptar</button>
+
+<hr />
+<h1>Update</h1>
+<p>Id: 
+    <input type="text" @bind="idUpd" class="input" maxlength="50">
+</p>
+<p>Nombre: 
+    <input type="text" @bind="nombreEstadoUpd" class="input" maxlength="50">
+</p>
+<p>Clave: 
+    <input type="text" @bind="claveEstadoUpd" class="input" maxlength="50">
+</p>
+<p>Municipio: 
+    <input type="text" @bind="municipioEstadoUpd" class="input" maxlength="50">
+</p>
+<button class="btn btn-secondary" @onclick="UpdateEstado">Actualizar</button>
+<hr />
+<h1>Delete</h1>
+<p>Id: 
+    <input type="text" @bind="idDelete" class="input" maxlength="50">
+</p>
+<button class="btn btn-danger" @onclick="DeleteEstado">Eliminar</button>
+
+
+@code {
+	Services.DBCosmosService service;
+	Models.Estados estados = null;
+	Models.Municipios municipios = null;
+
+	//INSERT
+	string nombreEstadoinsert;
+	string claveEstadoinsert;
+	string municipioEstadoinsert;
+
+	private async void InsertEstado()
+	{
+		var myGUID = Guid.NewGuid();
+		Models.Estados estados = new Models.Estados()
+		{
+			Id = myGUID.ToString(),
+			PartitionKey = "Mexico",
+			Nombre = nombreEstadoinsert,
+			Clave = claveEstadoinsert,
+			Municipios = new List<Models.Municipios>()
+			{
+				new Models.Municipios()
+				{
+					Nombre=municipioEstadoinsert
+				}
+			}
+		};
+		service = new Services.DBCosmosService();
+		await service.SaveAsync(estados, true);
+	}
+	//UPDATE
+	string idUpd;
+	string nombreEstadoUpd;
+	string claveEstadoUpd;
+	string municipioEstadoUpd;
+	private async void UpdateEstado()
+	{
+		Models.Estados estados = new Models.Estados()
+		{
+			Id = idUpd,
+			PartitionKey = "Mexico",
+			Nombre = nombreEstadoUpd,
+			Clave = claveEstadoUpd,
+			Municipios = new List<Models.Municipios>()
+			{
+				new Models.Municipios()
+				{
+					Nombre=municipioEstadoUpd
+				}
+			}
+		};
+		service = new Services.DBCosmosService();
+		await service.UpdateAsync(estados, estados.PartitionKey);
+	}
+
+	//DELETE
+	string idDelete;
+	private async void DeleteEstado()
+	{
+		service = new Services.DBCosmosService();
+		await service.DeleteAsync(idDelete,"Mexico");
+	}
+
+}
